@@ -1,0 +1,74 @@
+---
+import { LOCALES, DEFAULT_LOCALE, type Locale } from '@/site.config';
+import { profile } from '@/data/content';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  /** `noindex` para páginas de error. */
+  noindex?: boolean;
+}
+
+const { locale, title, description, noindex = false } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(`${import.meta.env.BASE_URL}og-image.png`, Astro.site).href;
+
+/**
+ * URL de esta misma página en cada idioma, para hreflang.
+ * Se parte de la ruta sin `base` ni prefijo de idioma y se reconstruye,
+ * de modo que no se acumulen prefijos (`/en/en/`) al navegar dentro de un idioma.
+ */
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const rest = (Astro.url.pathname.slice(base.length) || '/').replace(/^\/en(?=\/|$)/, '') || '/';
+
+const alternates = LOCALES.map((code) => {
+  const prefix = code === DEFAULT_LOCALE ? '' : `/${code}`;
+  const path = `${base}${prefix}${rest}`.replace(/\/{2,}/g, '/');
+  return { code, href: new URL(path, Astro.site).href };
+});
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: profile.name,
+  jobTitle: profile.role[locale],
+  email: `mailto:${profile.email}`,
+  telephone: profile.phone,
+  url: canonical,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'San Miguel de Tucumán',
+    addressCountry: 'AR',
+  },
+  alumniOf: {
+    '@type': 'CollegeOrUniversity',
+    name: 'Universidad Tecnológica Nacional — Facultad Regional Tucumán',
+  },
+  knowsLanguage: ['es', 'en'],
+};
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex, follow" />}
+
+{alternates.map(({ code, href }) => <link rel="alternate" hreflang={code} href={href} />)}
+<link rel="alternate" hreflang="x-default" href={alternates[0]!.href} />
+
+<meta property="og:type" content="profile" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:locale" content={locale === 'es' ? 'es_AR' : 'en_US'} />
+<meta property="og:site_name" content={profile.name} />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />

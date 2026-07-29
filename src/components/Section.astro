@@ -1,0 +1,23 @@
+---
+interface Props {
+  id: string;
+  kicker: string;
+  title: string;
+  class?: string;
+}
+
+const { id, kicker, title, class: className = '' } = Astro.props;
+---
+
+<section id={id} aria-labelledby={`${id}-title`} class={`py-20 sm:py-28 ${className}`}>
+  <div class="mx-auto w-full max-w-5xl px-5 sm:px-8">
+    <header class="reveal mb-10 sm:mb-14">
+      <p class="text-brand-600 dark:text-brand-300 mb-2 font-mono text-xs font-semibold tracking-[0.2em] uppercase">
+        {kicker}
+      </p>
+      <h2 id={`${id}-title`} class="text-3xl font-bold sm:text-4xl">{title}</h2>
+      <div class="from-brand-500 to-accent-500 mt-5 h-px w-24 bg-gradient-to-r"></div>
+    </header>
+    <slot />
+  </div>
+</section>

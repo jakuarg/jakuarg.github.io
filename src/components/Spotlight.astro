@@ -1,0 +1,51 @@
+---
+/**
+ * Habilita el spotlight de borde para todos los elementos con clase
+ * `.spotlight` de la página. Se incluye una sola vez en el layout: usa
+ * delegación de eventos, así que no importa cuántas tarjetas haya ni si
+ * aparecen después.
+ *
+ * Los estilos viven en `src/styles/global.css`.
+ */
+---
+
+<script>
+  // Solo con puntero de precisión: en pantallas táctiles no hay hover y el
+  // efecto se quedaría encendido en la última tarjeta tocada.
+  const finePointer = matchMedia('(pointer: fine)');
+
+  if (finePointer.matches) {
+    let lit: HTMLElement | null = null;
+
+    const apagar = () => {
+      lit?.classList.remove('is-lit');
+      lit = null;
+    };
+
+    document.addEventListener(
+      'pointermove',
+      (event) => {
+        const card = (event.target as Element | null)?.closest<HTMLElement>('.spotlight') ?? null;
+
+        if (card !== lit) {
+          apagar();
+          card?.classList.add('is-lit');
+          lit = card;
+        }
+
+        if (!card) return;
+
+        // Coordenadas relativas a la tarjeta: son las que mueven el centro
+        // del degradado radial.
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty('--spotlight-x', `${event.clientX - rect.left}px`);
+        card.style.setProperty('--spotlight-y', `${event.clientY - rect.top}px`);
+      },
+      { passive: true },
+    );
+
+    // El puntero puede salir de la ventana sin pasar por ninguna tarjeta.
+    document.addEventListener('pointerleave', apagar);
+    window.addEventListener('blur', apagar);
+  }
+</script>

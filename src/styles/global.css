@@ -1,0 +1,236 @@
+@import 'tailwindcss';
+
+/*
+ * Fuentes self-hosted: sin peticiones a terceros, mejor LCP y privacidad.
+ *
+ * Fontsource solo publica el CSS con todos los subconjuntos (cirílico, griego,
+ * vietnamita…), así que se declaran a mano los dos que hacen falta para español
+ * e inglés. Son fuentes variables: un archivo cubre de 100 a 900.
+ */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('@fontsource-variable/inter/files/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Space Grotesk Variable';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('@fontsource-variable/space-grotesk/files/space-grotesk-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC,
+    U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Modo oscuro controlado por clase en <html>, no por media query. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Paleta de marca (violeta -> cian), accesible sobre fondo claro y oscuro */
+  --color-brand-50: oklch(0.97 0.02 285);
+  --color-brand-100: oklch(0.94 0.04 285);
+  --color-brand-200: oklch(0.88 0.08 285);
+  --color-brand-300: oklch(0.8 0.13 285);
+  --color-brand-400: oklch(0.71 0.18 285);
+  --color-brand-500: oklch(0.62 0.21 285);
+  --color-brand-600: oklch(0.54 0.21 285);
+  --color-brand-700: oklch(0.46 0.18 285);
+  --color-brand-800: oklch(0.38 0.14 285);
+  --color-brand-900: oklch(0.3 0.1 285);
+
+  --color-accent-500: oklch(0.72 0.14 200);
+
+  --radius-card: 1rem;
+
+  --animate-fade-up: fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --surface: oklch(0.99 0.004 285);
+    --surface-raised: oklch(1 0 0);
+    --border-subtle: oklch(0.9 0.01 285);
+    --text-strong: oklch(0.22 0.02 285);
+    --text-muted: oklch(0.48 0.02 285);
+  }
+
+  :root.dark {
+    color-scheme: dark;
+    --surface: oklch(0.17 0.02 285);
+    --surface-raised: oklch(0.21 0.02 285);
+    --border-subtle: oklch(0.31 0.02 285);
+    --text-strong: oklch(0.97 0.01 285);
+    --text-muted: oklch(0.72 0.02 285);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Compensa el header sticky al saltar a un ancla */
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--surface);
+    color: var(--text-strong);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Foco visible y consistente para navegación por teclado */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-500);
+    outline-offset: 3px;
+    border-radius: 0.25rem;
+  }
+
+  ::selection {
+    background-color: var(--color-brand-500);
+    color: white;
+  }
+
+  /* Respeta la preferencia del sistema de reducir movimiento */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .surface-card {
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-card);
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .border-subtle {
+    border-color: var(--border-subtle);
+  }
+
+  /*
+   * Spotlight en el borde.
+   *
+   * Misma idea que la versión en WinUI 3: el degradado no va de fondo, va del
+   * borde. Un degradado radial se pinta sobre un anillo de 2 px y su centro
+   * sigue al puntero, así que solo se enciende el pedazo de borde más cercano
+   * al mouse.
+   *
+   * Tres detalles que hacen que funcione:
+   * - El brillo es un `::before` posicionado sobre la caja de borde, no dentro
+   *   del contenido: el `padding` de la tarjeta no lo desplaza.
+   * - `pointer-events: none` (el equivalente a `IsHitTestVisible="False"`), si
+   *   no se come los eventos de puntero y el efecto nunca sigue al mouse.
+   * - `mask-composite` recorta el centro y deja únicamente el anillo. Si el
+   *   navegador no lo soporta, el efecto no se declara y la tarjeta se ve
+   *   normal, sin un rectángulo de color encima.
+   */
+  .spotlight {
+    position: relative;
+  }
+
+  @supports (mask-composite: exclude) or (-webkit-mask-composite: xor) {
+    .spotlight::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      padding: var(--spotlight-width, 1.5px);
+      border-radius: inherit;
+      background: radial-gradient(
+        var(--spotlight-size, 220px) circle at var(--spotlight-x, 50%) var(--spotlight-y, -20%),
+        var(--color-brand-400),
+        var(--color-accent-500) 40%,
+        transparent 72%
+      );
+      mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      mask-composite: exclude;
+      -webkit-mask-composite: xor;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .spotlight.is-lit::before {
+      opacity: 1;
+    }
+  }
+
+  /*
+   * Aparición al hacer scroll.
+   *
+   * Por defecto el contenido es visible: el estado oculto solo se activa cuando
+   * el script de <head> marca `data-reveal="on"` (hay JS, hay
+   * IntersectionObserver y el usuario no pidió reducir el movimiento). Así, si
+   * algo falla, el peor caso es perder la animación, nunca el contenido.
+   */
+  .reveal {
+    transition:
+      opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  [data-reveal='on'] .reveal {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+
+  [data-reveal='on'] .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}

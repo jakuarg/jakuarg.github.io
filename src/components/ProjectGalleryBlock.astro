@@ -1,0 +1,148 @@
+---
+import { Image } from 'astro:assets';
+import type { Locale } from '@/site.config';
+import { useTranslations } from '@/i18n/utils';
+import Icon from './Icon.astro';
+
+export type Captura = {
+  imagen: ImageMetadata;
+  alt: string;
+};
+
+interface Props {
+  /** Identificador único del visor; hay uno por tema. */
+  id: string;
+  titulo: string;
+  capturas: Captura[];
+  locale: Locale;
+}
+
+const { id, titulo, capturas, locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<ul class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+  {
+    capturas.map((captura, indice) => (
+      <li>
+        <button
+          type="button"
+          data-abrir-galeria={id}
+          data-indice={indice}
+          class="border-subtle hover:border-brand-400 group/thumb block w-full overflow-hidden rounded-lg border transition-colors"
+          aria-label={`${t('gallery.open')}: ${captura.alt}`}
+        >
+          <Image
+            src={captura.imagen}
+            alt={captura.alt}
+            widths={[320, 640]}
+            sizes="(min-width: 640px) 220px, 45vw"
+            loading="lazy"
+            class="aspect-video w-full object-cover object-top transition-transform duration-500 group-hover/thumb:scale-105"
+          />
+        </button>
+      </li>
+    ))
+  }
+</ul>
+
+{
+  /*
+  `<dialog>` nativo: trae foco atrapado, cierre con Escape y capa modal sin
+  código propio. El JS solo cambia qué captura está visible.
+*/
+}
+<dialog id={id} data-galeria class="bg-transparent backdrop:bg-black/80 backdrop:backdrop-blur-sm" aria-label={titulo}>
+  <div class="mx-auto flex max-h-[92dvh] w-[min(92vw,72rem)] flex-col gap-3">
+    <div class="flex items-center justify-between gap-4 text-white">
+      <p data-galeria-pie class="text-sm"></p>
+      <button
+        type="button"
+        data-cerrar-galeria
+        class="grid size-9 shrink-0 place-items-center rounded-full border border-white/30 transition-colors hover:bg-white/10"
+        aria-label={t('gallery.close')}
+      >
+        <Icon name="close" class="size-4" />
+      </button>
+    </div>
+
+    <div class="relative">
+      {
+        capturas.map((captura, indice) => (
+          <Image
+            src={captura.imagen}
+            alt={captura.alt}
+            widths={[960, 1440, 1920]}
+            sizes="92vw"
+            loading="lazy"
+            data-galeria-imagen
+            data-alt={captura.alt}
+            hidden={indice !== 0}
+            class="max-h-[80dvh] w-full rounded-xl object-contain"
+          />
+        ))
+      }
+    </div>
+
+    {
+      capturas.length > 1 && (
+        <div class="flex items-center justify-center gap-3">
+          <button
+            type="button"
+            data-galeria-anterior
+            class="grid size-10 place-items-center rounded-full border border-white/30 text-white transition-colors hover:bg-white/10"
+            aria-label={t('gallery.prev')}
+          >
+            <Icon name="arrowRight" class="size-4 rotate-180" />
+          </button>
+          <p data-galeria-contador class="text-sm text-white/70" aria-live="polite" />
+          <button
+            type="button"
+            data-galeria-siguiente
+            class="grid size-10 place-items-center rounded-full border border-white/30 text-white transition-colors hover:bg-white/10"
+            aria-label={t('gallery.next')}
+          >
+            <Icon name="arrowRight" class="size-4" />
+          </button>
+        </div>
+      )
+    }
+  </div>
+</dialog>
+
+<script>
+  document.querySelectorAll<HTMLDialogElement>('[data-galeria]').forEach((dialogo) => {
+    const imagenes = [...dialogo.querySelectorAll<HTMLImageElement>('[data-galeria-imagen]')];
+    const pie = dialogo.querySelector<HTMLElement>('[data-galeria-pie]');
+    const contador = dialogo.querySelector<HTMLElement>('[data-galeria-contador]');
+    let actual = 0;
+
+    const mostrar = (indice: number) => {
+      actual = (indice + imagenes.length) % imagenes.length;
+      imagenes.forEach((imagen, i) => (imagen.hidden = i !== actual));
+      if (pie) pie.textContent = imagenes[actual]?.dataset.alt ?? '';
+      if (contador) contador.textContent = `${actual + 1} / ${imagenes.length}`;
+    };
+
+    document.querySelectorAll<HTMLButtonElement>(`[data-abrir-galeria="${dialogo.id}"]`).forEach((boton) => {
+      boton.addEventListener('click', () => {
+        mostrar(Number(boton.dataset.indice ?? 0));
+        dialogo.showModal();
+      });
+    });
+
+    dialogo.querySelector('[data-cerrar-galeria]')?.addEventListener('click', () => dialogo.close());
+    dialogo.querySelector('[data-galeria-anterior]')?.addEventListener('click', () => mostrar(actual - 1));
+    dialogo.querySelector('[data-galeria-siguiente]')?.addEventListener('click', () => mostrar(actual + 1));
+
+    // Clic fuera de la imagen cierra, como en cualquier visor.
+    dialogo.addEventListener('click', (evento) => {
+      if (evento.target === dialogo) dialogo.close();
+    });
+
+    dialogo.addEventListener('keydown', (evento) => {
+      if (evento.key === 'ArrowRight') mostrar(actual + 1);
+      if (evento.key === 'ArrowLeft') mostrar(actual - 1);
+    });
+  });
+</script>

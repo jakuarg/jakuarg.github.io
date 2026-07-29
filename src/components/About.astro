@@ -1,0 +1,51 @@
+---
+import type { Locale } from '@/site.config';
+import { useTranslations } from '@/i18n/utils';
+import { profile, languages } from '@/data/content';
+import Section from './Section.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<Section id="about" kicker={t('section.about.kicker')} title={t('section.about')}>
+  <div class="grid gap-10 md:grid-cols-[1.5fr_1fr]">
+    <div class="reveal space-y-5">
+      {profile.about[locale].map((paragraph) => <p class="text-muted leading-relaxed">{paragraph}</p>)}
+
+      <blockquote class="border-brand-500 mt-8 border-l-2 pl-5 text-sm leading-relaxed italic">
+        {profile.objective[locale]}
+      </blockquote>
+    </div>
+
+    <div class="reveal surface-card spotlight h-fit p-6">
+      <h3 class="mb-5 text-sm font-semibold tracking-wide uppercase">{t('section.languages')}</h3>
+      <ul class="space-y-5">
+        {
+          languages.map((language) => (
+            <li>
+              <div class="mb-2 flex items-baseline justify-between gap-3">
+                <span class="font-medium">{language.name[locale]}</span>
+                <span class="text-muted text-xs">{language.level[locale]}</span>
+              </div>
+              <div
+                class="h-1.5 overflow-hidden rounded-full"
+                style="background: color-mix(in oklab, var(--border-subtle) 100%, transparent);"
+                role="presentation"
+              >
+                <div
+                  class="from-brand-500 to-accent-500 h-full rounded-full bg-gradient-to-r"
+                  style={`width: ${language.value}%`}
+                />
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</Section>

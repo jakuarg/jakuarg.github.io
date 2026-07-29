@@ -1,0 +1,12 @@
+# Normaliza los finales de línea: en el repo siempre LF, en Windows CRLF al
+# trabajar. Evita que el build en Linux vea cambios que no existen.
+* text=auto eol=lf
+
+# Binarios: que Git no intente convertirlos.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.pdf binary
+*.woff2 binary

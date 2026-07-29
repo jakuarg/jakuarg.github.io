@@ -1,0 +1,132 @@
+---
+import type { Locale } from '@/site.config';
+import { useTranslations } from '@/i18n/utils';
+import { profile, socials, cv } from '@/data/content';
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const cvHref = `${import.meta.env.BASE_URL}${cv[locale]}`.replace(/\/{2,}/g, '/');
+
+const details = [
+  { icon: 'mail', label: t('contact.email'), value: profile.email, href: `mailto:${profile.email}` },
+  { icon: 'phone', label: t('contact.phone'), value: profile.phone, href: `tel:${profile.phoneHref}` },
+  { icon: 'pin', label: t('contact.location'), value: profile.location[locale], href: null },
+] as const;
+---
+
+<Section id="contact" kicker={t('section.contact.kicker')} title={t('section.contact')}>
+  <div class="grid gap-8 md:grid-cols-[1fr_1fr] md:items-start">
+    <div class="reveal">
+      <p class="text-muted max-w-md text-lg leading-relaxed">{t('contact.lead')}</p>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href={`mailto:${profile.email}`}
+          class="bg-brand-600 hover:bg-brand-700 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white transition-colors"
+        >
+          <Icon name="mail" class="size-4" />
+          {t('contact.email')}
+        </a>
+        <button
+          type="button"
+          data-copy-email
+          data-email={profile.email}
+          data-label-copy={t('contact.copy')}
+          data-label-copied={t('contact.copied')}
+          class="border-subtle hover:border-brand-400 inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-colors"
+        >
+          <Icon name="copy" class="size-4" />
+          <span data-copy-label>{t('contact.copy')}</span>
+        </button>
+      </div>
+
+      <a
+        href={cvHref}
+        download
+        class="text-muted hover:text-brand-600 dark:hover:text-brand-300 mt-6 inline-flex items-center gap-2 text-sm font-semibold transition-colors"
+      >
+        <Icon name="download" class="size-4" />
+        {t('cv.download')}
+      </a>
+    </div>
+
+    <ul class="reveal space-y-3">
+      {
+        details.map((detail) => (
+          <li class="surface-card spotlight flex items-center gap-4 p-4">
+            <span class="bg-brand-500/10 text-brand-600 dark:text-brand-300 grid size-10 shrink-0 place-items-center rounded-full">
+              <Icon name={detail.icon} class="size-[18px]" />
+            </span>
+            <span class="min-w-0">
+              <span class="text-muted block text-xs">{detail.label}</span>
+              {detail.href ? (
+                <a href={detail.href} class="hover:text-brand-600 dark:hover:text-brand-300 block truncate font-medium">
+                  {detail.value}
+                </a>
+              ) : (
+                <span class="block truncate font-medium">{detail.value}</span>
+              )}
+            </span>
+          </li>
+        ))
+      }
+      {
+        socials.map((social) => (
+          <li class="surface-card spotlight flex items-center gap-4 p-4">
+            <span class="bg-brand-500/10 text-brand-600 dark:text-brand-300 grid size-10 shrink-0 place-items-center rounded-full">
+              <Icon name={social.icon} class="size-[18px]" />
+            </span>
+            <span class="min-w-0">
+              <span class="text-muted block text-xs">{social.label}</span>
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="hover:text-brand-600 dark:hover:text-brand-300 block truncate font-medium"
+              >
+                {social.href.replace('https://', '')}
+              </a>
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <p aria-live="polite" class="sr-only" data-copy-status></p>
+</Section>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-copy-email]');
+  const label = button?.querySelector<HTMLElement>('[data-copy-label]');
+  const status = document.querySelector<HTMLElement>('[data-copy-status]');
+
+  // Sin `navigator.clipboard` (contextos no seguros) el botón no aporta nada.
+  if (button && label && !navigator.clipboard) {
+    button.hidden = true;
+  } else if (button && label) {
+    let timeout: number | undefined;
+
+    button.addEventListener('click', async () => {
+      const { email = '', labelCopy = '', labelCopied = '' } = button.dataset;
+      try {
+        await navigator.clipboard.writeText(email);
+        label.textContent = labelCopied;
+        if (status) status.textContent = labelCopied;
+        clearTimeout(timeout);
+        timeout = window.setTimeout(() => {
+          label.textContent = labelCopy;
+          if (status) status.textContent = '';
+        }, 2000);
+      } catch {
+        // El usuario siempre tiene el enlace mailto y el texto visible como alternativa.
+      }
+    });
+  }
+</script>

@@ -1,0 +1,40 @@
+---
+import type { Locale } from '@/site.config';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Hero from '@/components/Hero.astro';
+import About from '@/components/About.astro';
+import Skills from '@/components/Skills.astro';
+import Projects from '@/components/Projects.astro';
+import Education from '@/components/Education.astro';
+import Contact from '@/components/Contact.astro';
+import { profile } from '@/data/content';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+/** Una sola definición de la home; las páginas por idioma solo pasan el locale. */
+const meta = {
+  es: {
+    title: `${profile.name} — Estudiante de Ingeniería en Sistemas`,
+    description:
+      'Portfolio de David Jacas Leila, estudiante de Ingeniería en Sistemas de Información en la UTN-FRT. Desarrollo back-end en C# .NET, Java y SQL, con experiencia en sistemas de gestión en producción.',
+  },
+  en: {
+    title: `${profile.name} — Information Systems Engineering Student`,
+    description:
+      'Portfolio of David Jacas Leila, Information Systems Engineering student at UTN-FRT. Back-end development in C# .NET, Java and SQL, with experience on production management systems.',
+  },
+} as const;
+---
+
+<BaseLayout locale={locale} title={meta[locale].title} description={meta[locale].description}>
+  <Hero locale={locale} />
+  <About locale={locale} />
+  <Skills locale={locale} />
+  <Projects locale={locale} />
+  <Education locale={locale} />
+  <Contact locale={locale} />
+</BaseLayout>

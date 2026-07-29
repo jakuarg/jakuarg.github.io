@@ -1,0 +1,180 @@
+---
+import { Image } from 'astro:assets';
+import type { Locale } from '@/site.config';
+import { useTranslations } from '@/i18n/utils';
+import { profile, stats, socials, cv } from '@/data/content';
+import Icon from './Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const cvHref = `${import.meta.env.BASE_URL}${cv[locale]}`.replace(/\/{2,}/g, '/');
+const initials = profile.name
+  .split(' ')
+  .map((part) => part[0])
+  .slice(0, 2)
+  .join('');
+
+/**
+ * Foto de perfil opcional: si existe `src/assets/perfil.<ext>` se usa; si no,
+ * el retrato cae en las iniciales. Copiar el archivo alcanza, no hay que tocar
+ * código. Ver el LEEME de `src/assets/`.
+ */
+const retratos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/perfil.{png,jpg,jpeg,webp,avif}', {
+  eager: true,
+});
+const retrato = Object.values(retratos)[0]?.default;
+---
+
+<section class="relative overflow-hidden pt-16 pb-20 sm:pt-24 sm:pb-28" aria-labelledby="hero-title">
+  <!-- Fondo decorativo: no aporta información, se oculta a lectores de pantalla -->
+  <div class="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+    <div
+      class="from-brand-500/25 absolute -top-32 -left-24 size-[32rem] rounded-full bg-gradient-to-br to-transparent blur-3xl"
+    >
+    </div>
+    <div
+      class="from-accent-500/20 absolute -top-16 -right-32 size-[28rem] rounded-full bg-gradient-to-bl to-transparent blur-3xl"
+    >
+    </div>
+    <div class="bg-grid absolute inset-0 opacity-[0.35] dark:opacity-20"></div>
+  </div>
+
+  <div class="mx-auto grid w-full max-w-5xl gap-12 px-5 sm:px-8 md:grid-cols-[1.4fr_1fr] md:items-center">
+    <div>
+      <p
+        class="border-subtle text-muted mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium"
+        style="animation: var(--animate-fade-up);"
+      >
+        <span class="relative flex size-2">
+          <span class="absolute inline-flex size-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex size-2 rounded-full bg-emerald-500"></span>
+        </span>
+        {t('hero.available')}
+      </p>
+
+      <h1 id="hero-title" class="text-4xl leading-[1.1] font-bold sm:text-5xl lg:text-6xl">
+        {profile.name}
+      </h1>
+      <p class="text-brand-600 dark:text-brand-300 mt-3 text-lg font-medium sm:text-xl">
+        {profile.role[locale]}
+      </p>
+      <p class="text-muted mt-6 max-w-xl text-base leading-relaxed sm:text-lg">
+        {profile.headline[locale]}
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center gap-3">
+        <a
+          href="#projects"
+          class="bg-brand-600 hover:bg-brand-700 shadow-brand-600/20 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white shadow-lg transition-colors"
+        >
+          {t('hero.cta.projects')}
+          <Icon name="arrowRight" class="size-4" />
+        </a>
+        <a
+          href="#contact"
+          class="border-subtle hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-300 inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition-colors"
+        >
+          {t('hero.cta.contact')}
+        </a>
+        <a
+          href={cvHref}
+          download
+          class="text-muted hover:text-brand-600 dark:hover:text-brand-300 inline-flex items-center gap-2 px-2 py-3 text-sm font-semibold transition-colors"
+        >
+          <Icon name="download" class="size-4" />
+          {t('cv.download')}
+        </a>
+      </div>
+
+      <ul class="mt-10 flex flex-wrap items-center gap-4">
+        {
+          socials.map((social) => (
+            <li>
+              <a
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="border-subtle hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-300 grid size-10 place-items-center rounded-full border transition-colors"
+                aria-label={social.label}
+                title={social.label}
+              >
+                <Icon name={social.icon} class="size-[18px]" />
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a
+            href={`mailto:${profile.email}`}
+            class="border-subtle hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-300 grid size-10 place-items-center rounded-full border transition-colors"
+            aria-label={t('contact.email')}
+            title={t('contact.email')}
+          >
+            <Icon name="mail" class="size-[18px]" />
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Foto de perfil; sin ella, un retrato tipográfico con las iniciales -->
+    <div class="order-first md:order-none">
+      <div class="relative mx-auto w-full max-w-64 md:max-w-none">
+        <div class="from-brand-500 to-accent-500 aspect-square rounded-[2rem] bg-gradient-to-br p-px">
+          {
+            retrato ? (
+              <Image
+                src={retrato}
+                alt={`${profile.name}, ${profile.role[locale]}`}
+                widths={[256, 512, 768]}
+                sizes="(min-width: 768px) 320px, 16rem"
+                loading="eager"
+                class="size-full rounded-[calc(2rem-1px)] object-cover"
+              />
+            ) : (
+              <div
+                class="font-display grid size-full place-items-center rounded-[calc(2rem-1px)] text-6xl font-bold sm:text-7xl"
+                style="background: var(--surface-raised);"
+                aria-hidden="true"
+              >
+                <span class="from-brand-500 to-accent-500 bg-gradient-to-br bg-clip-text text-transparent">
+                  {initials}
+                </span>
+              </div>
+            )
+          }
+        </div>
+        <div
+          class="surface-card absolute -bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-1.5 px-3 py-2 text-xs font-medium whitespace-nowrap shadow-lg"
+        >
+          <Icon name="pin" class="text-brand-500 size-3.5" />
+          {profile.location[locale]}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="mx-auto mt-20 grid w-full max-w-5xl grid-cols-1 gap-4 px-5 sm:grid-cols-3 sm:px-8">
+    {
+      stats.map((stat) => (
+        <li class="surface-card spotlight reveal p-5">
+          <p class="font-display text-brand-600 dark:text-brand-300 text-3xl font-bold">{stat.value}</p>
+          <p class="text-muted mt-1 text-sm">{stat.label[locale]}</p>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, var(--border-subtle) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--border-subtle) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
+  }
+</style>

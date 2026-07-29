@@ -1,0 +1,31 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { useTranslations, localizePath } from '@/i18n/utils';
+import Icon from '@/components/Icon.astro';
+
+// GitHub Pages sirve un único 404.html para todo el sitio, así que se muestra
+// en español (idioma por defecto) con el enlace de vuelta al inicio.
+const locale = 'es';
+const t = useTranslations(locale);
+---
+
+<BaseLayout locale={locale} title={`404 — ${t('404.title')}`} description={t('404.text')} noindex>
+  <section class="mx-auto grid min-h-[70vh] w-full max-w-5xl place-items-center px-5 text-center sm:px-8">
+    <div>
+      <p
+        class="font-display from-brand-500 to-accent-500 bg-gradient-to-br bg-clip-text text-7xl font-bold text-transparent sm:text-8xl"
+      >
+        404
+      </p>
+      <h1 class="mt-4 text-2xl font-bold sm:text-3xl">{t('404.title')}</h1>
+      <p class="text-muted mt-3">{t('404.text')}</p>
+      <a
+        href={localizePath('/', locale)}
+        class="bg-brand-600 hover:bg-brand-700 mt-8 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white transition-colors"
+      >
+        <Icon name="arrowRight" class="size-4" />
+        {t('404.back')}
+      </a>
+    </div>
+  </section>
+</BaseLayout>

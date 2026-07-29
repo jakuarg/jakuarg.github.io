@@ -1,0 +1,86 @@
+---
+import type { Locale } from '@/site.config';
+import type { Project } from '@/data/content';
+import { useTranslations } from '@/i18n/utils';
+import ProjectGalleryBlock, { type Captura } from './ProjectGalleryBlock.astro';
+
+interface Props {
+  project: Project;
+  locale: Locale;
+}
+
+const { project, locale } = Astro.props;
+const t = useTranslations(locale);
+
+/**
+ * Las capturas se toman de `src/assets/proyectos/<slug>/<tema>/`, con `<tema>`
+ * igual a `claro` u `oscuro`, para que cada una se vea con el mismo tema que el
+ * sitio. Al pasar por `astro:assets` se optimizan en el build y se conocen sus
+ * dimensiones, así que no hay saltos de maquetado.
+ *
+ * Para agregar una captura alcanza con copiarla en la carpeta: no hay que tocar
+ * código. Si un tema no tiene capturas propias, se usan las del otro en ambos.
+ */
+const archivos = import.meta.glob<{ default: ImageMetadata }>('/src/assets/proyectos/**/*.{png,jpg,jpeg,webp,avif}', {
+  eager: true,
+});
+
+const capturasDe = (tema: 'claro' | 'oscuro'): Captura[] =>
+  Object.entries(archivos)
+    .filter(([ruta]) => ruta.includes(`/proyectos/${project.slug}/${tema}/`))
+    // Orden alfabético: por eso conviene numerar los archivos (01-, 02-, …).
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([ruta, modulo], indice) => {
+      const nombre = ruta
+        .split('/')
+        .pop()!
+        .replace(/\.[^.]+$/, '');
+      return {
+        imagen: modulo.default,
+        alt: project.captions?.[nombre]?.[locale] ?? `${project.title[locale]} — ${indice + 1}`,
+      };
+    });
+
+const claro = capturasDe('claro');
+const oscuro = capturasDe('oscuro');
+
+const titulo = `${t('gallery.title')} — ${project.title[locale]}`;
+
+/**
+ * El intercambio es puramente CSS (`dark:`), igual que el resto del sitio: al
+ * cambiar de tema la galería correspondiente ya está en el HTML y no hay
+ * parpadeo ni recarga. Las imágenes ocultas son `lazy`, así que el navegador no
+ * descarga el juego que no está a la vista.
+ */
+const tieneAmbos = claro.length > 0 && oscuro.length > 0;
+const unico = claro.length > 0 ? claro : oscuro;
+---
+
+{
+  (claro.length > 0 || oscuro.length > 0) && (
+    <div class="mt-6">
+      {tieneAmbos ? (
+        <>
+          <div class="dark:hidden">
+            <ProjectGalleryBlock
+              id={`galeria-${project.slug}-claro`}
+              titulo={titulo}
+              capturas={claro}
+              locale={locale}
+            />
+          </div>
+          <div class="hidden dark:block">
+            <ProjectGalleryBlock
+              id={`galeria-${project.slug}-oscuro`}
+              titulo={titulo}
+              capturas={oscuro}
+              locale={locale}
+            />
+          </div>
+        </>
+      ) : (
+        <ProjectGalleryBlock id={`galeria-${project.slug}`} titulo={titulo} capturas={unico} locale={locale} />
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,54 @@
+---
+import type { Locale } from '@/site.config';
+import { useTranslations } from '@/i18n/utils';
+import { education } from '@/data/content';
+import Section from './Section.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<Section id="education" kicker={t('section.education.kicker')} title={t('section.education')}>
+  <ol class="relative space-y-8 border-l pl-8" style="border-color: var(--border-subtle);">
+    {
+      education.map((item) => (
+        <li class="reveal relative">
+          <span
+            class:list={[
+              'absolute top-1.5 -left-[2.3125rem] size-3.5 rounded-full ring-4',
+              item.current ? 'bg-brand-500' : 'bg-[var(--border-subtle)]',
+            ]}
+            style="--tw-ring-color: var(--surface);"
+            aria-hidden="true"
+          />
+
+          <h3 class="text-lg font-semibold">{item.title[locale]}</h3>
+
+          <p class="text-muted mt-1 text-sm">
+            {item.org} <span aria-hidden="true">·</span>{' '}
+            <span class="font-mono text-xs">
+              {item.current ? `${item.period} — ${t('project.present')}` : item.period}
+            </span>
+          </p>
+
+          {item.items[locale].length > 0 && (
+            <ul class="text-muted mt-3 space-y-1.5 text-sm">
+              {item.items[locale].map((detail) => (
+                <li class="flex gap-2.5">
+                  <span class="text-brand-500" aria-hidden="true">
+                    ·
+                  </span>
+                  {detail}
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</Section>

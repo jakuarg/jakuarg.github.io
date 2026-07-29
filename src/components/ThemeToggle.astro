@@ -1,0 +1,35 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<button
+  type="button"
+  data-theme-toggle
+  class="border-subtle hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-300 grid size-10 place-items-center rounded-full border transition-colors"
+  aria-label={label}
+  title={label}
+>
+  <Icon name="sun" class="size-[18px] dark:hidden" />
+  <Icon name="moon" class="hidden size-[18px] dark:block" />
+</button>
+
+<script>
+  // El tema inicial ya está aplicado por el script inline de BaseLayout,
+  // así que aquí solo hace falta manejar el cambio manual.
+  const STORAGE_KEY = 'theme';
+
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const theme = isDark ? 'dark' : 'light';
+      localStorage.setItem(STORAGE_KEY, theme);
+      document.documentElement.style.colorScheme = theme;
+    });
+  });
+</script>

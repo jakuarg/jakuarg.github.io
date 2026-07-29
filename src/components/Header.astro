@@ -1,0 +1,156 @@
+---
+import type { Locale } from '@/site.config';
+import { useTranslations, localizePath, getAlternateLocale } from '@/i18n/utils';
+import ThemeToggle from './ThemeToggle.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const alternate = getAlternateLocale(locale);
+
+const links = [
+  { href: '#about', label: t('nav.about') },
+  { href: '#skills', label: t('nav.skills') },
+  { href: '#projects', label: t('nav.projects') },
+  { href: '#education', label: t('nav.education') },
+  { href: '#contact', label: t('nav.contact') },
+];
+---
+
+<a
+  href="#main"
+  class="bg-brand-600 sr-only rounded-md px-4 py-2 text-white focus-visible:not-sr-only focus-visible:absolute focus-visible:top-3 focus-visible:left-3 focus-visible:z-50"
+>
+  {t('nav.skip')}
+</a>
+
+<header
+  data-header
+  class="border-subtle sticky top-0 z-40 border-b border-transparent backdrop-blur-md transition-[background-color,border-color] duration-300"
+>
+  <nav class="mx-auto flex h-16 w-full max-w-5xl items-center justify-between px-5 sm:px-8" aria-label={t('nav.menu')}>
+    <a href={localizePath('/', locale)} class="font-display text-lg font-bold tracking-tight">
+      David<span class="text-brand-500">.</span>
+    </a>
+
+    <ul class="hidden items-center gap-1 md:flex">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              data-nav-link
+              class="text-muted hover:text-brand-600 dark:hover:text-brand-300 aria-[current=true]:text-brand-600 dark:aria-[current=true]:text-brand-300 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="flex items-center gap-2">
+      <a
+        href={localizePath('/', alternate)}
+        class="border-subtle hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-300 flex h-10 items-center gap-1.5 rounded-full border px-3 text-xs font-semibold uppercase transition-colors"
+        aria-label={t('lang.switch')}
+        title={t('lang.switch')}
+        hreflang={alternate}
+      >
+        <Icon name="globe" class="size-4" />
+        {alternate}
+      </a>
+      <ThemeToggle label={t('theme.toggle')} />
+      <button
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={t('nav.menu')}
+        class="border-subtle hover:border-brand-400 grid size-10 place-items-center rounded-full border transition-colors md:hidden"
+      >
+        <Icon name="menu" class="size-[18px]" />
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" data-menu hidden class="border-subtle border-t md:hidden" style="background: var(--surface);">
+    <ul class="mx-auto max-w-5xl px-5 py-3 sm:px-8">
+      {
+        links.map((link) => (
+          <li>
+            <a href={link.href} data-menu-link class="hover:text-brand-600 block rounded-md px-2 py-3 font-medium">
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+
+  // Fondo del header solo cuando la página ya se desplazó.
+  if (header) {
+    const update = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+  }
+
+  if (toggle && menu) {
+    const setOpen = (open: boolean) => {
+      menu.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+
+    // `aria-expanded` es la fuente de verdad del estado abierto/cerrado.
+    const isOpen = () => toggle.getAttribute('aria-expanded') === 'true';
+
+    toggle.addEventListener('click', () => setOpen(!isOpen()));
+    menu.querySelectorAll('[data-menu-link]').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isOpen()) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+    // Al pasar a escritorio el menú desplegable deja de tener sentido.
+    matchMedia('(min-width: 768px)').addEventListener('change', (event) => {
+      if (event.matches) setOpen(false);
+    });
+  }
+
+  // Resalta en la navegación la sección visible.
+  const navLinks = [...document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')];
+  const sections = navLinks
+    .map((link) => document.querySelector<HTMLElement>(link.hash))
+    .filter((section): section is HTMLElement => section !== null);
+
+  if (sections.length > 0) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          navLinks.forEach((link) => link.setAttribute('aria-current', String(link.hash === `#${entry.target.id}`)));
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    sections.forEach((section) => observer.observe(section));
+  }
+</script>
+
+<style>
+  [data-header].is-scrolled {
+    background-color: color-mix(in oklab, var(--surface) 82%, transparent);
+    border-bottom-color: var(--border-subtle);
+  }
+</style>

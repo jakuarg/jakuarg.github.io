@@ -1,0 +1,35 @@
+{
+  "name": "portfolio-2026",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "og": "node scripts/generate-og.mjs",
+    "format": "prettier --write \"**/*.{astro,ts,js,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{astro,ts,js,json,md,css}\"",
+    "lint": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/inter": "^5.2.5",
+    "@fontsource-variable/space-grotesk": "^5.2.5",
+    "astro": "^7.1.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "prettier": "^3.6.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
+  }
+}
