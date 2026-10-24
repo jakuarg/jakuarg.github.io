@@ -50,64 +50,90 @@ const t = useTranslations(locale);
   /*
   `<dialog>` nativo: trae foco atrapado, cierre con Escape y capa modal sin
   código propio. El JS solo cambia qué captura está visible.
+
+  Ocupa toda la ventana y centra el contenido, así el botón de cerrar puede ir
+  en la esquina, como en cualquier visor, y todo el fondo cierra al hacer clic.
 */
 }
-<dialog id={id} data-galeria class="bg-transparent backdrop:bg-black/80 backdrop:backdrop-blur-sm" aria-label={titulo}>
-  <div class="mx-auto flex max-h-[92dvh] w-[min(92vw,72rem)] flex-col gap-3">
-    <div class="flex items-center justify-between gap-4 text-white">
-      <p data-galeria-pie class="text-sm"></p>
-      <button
-        type="button"
-        data-cerrar-galeria
-        class="grid size-9 shrink-0 place-items-center rounded-full border border-white/30 transition-colors hover:bg-white/10"
-        aria-label={t('gallery.close')}
-      >
-        <Icon name="close" class="size-4" />
-      </button>
-    </div>
+<dialog
+  id={id}
+  data-galeria
+  class="m-0 grid h-dvh max-h-dvh w-dvw max-w-dvw place-items-center bg-transparent p-0 backdrop:bg-black/85 backdrop:backdrop-blur-sm"
+  aria-label={titulo}
+>
+  <button
+    type="button"
+    data-cerrar-galeria
+    class="absolute top-4 right-4 z-10 grid size-10 place-items-center rounded-full border border-white/25 bg-black/40 text-white transition-colors hover:bg-white/15"
+    aria-label={t('gallery.close')}
+  >
+    <Icon name="close" class="size-4" />
+  </button>
 
-    <div class="relative">
+  {
+    /*
+    `w-fit` es la clave: el ancho lo define la imagen, no el contenedor. Si el
+    contenedor fuera fijo, el pie y los controles quedarían separados de los
+    bordes reales de la captura.
+  */
+  }
+  <figure class="flex w-fit max-w-full flex-col items-center gap-4 p-4">
+    <div class="flex min-h-0 items-center justify-center">
       {
         capturas.map((captura, indice) => (
           <Image
             src={captura.imagen}
             alt={captura.alt}
             widths={[960, 1440, 1920]}
-            sizes="92vw"
+            sizes="(min-width: 1280px) 88vw, 92vw"
             loading="lazy"
             data-galeria-imagen
             data-alt={captura.alt}
             hidden={indice !== 0}
-            class="max-h-[80dvh] w-full rounded-xl object-contain"
+            class="h-auto max-h-[80dvh] w-auto max-w-full rounded-xl shadow-2xl ring-1 ring-white/15"
           />
         ))
       }
     </div>
 
-    {
-      capturas.length > 1 && (
-        <div class="flex items-center justify-center gap-3">
+    {/* Pie y controles en una sola fila: deja el máximo de alto para la imagen. */}
+    <figcaption class="flex w-full items-center justify-center gap-4">
+      {
+        capturas.length > 1 && (
           <button
             type="button"
             data-galeria-anterior
-            class="grid size-10 place-items-center rounded-full border border-white/30 text-white transition-colors hover:bg-white/10"
+            class="grid size-10 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/15"
             aria-label={t('gallery.prev')}
           >
             <Icon name="arrowRight" class="size-4 rotate-180" />
           </button>
-          <p data-galeria-contador class="text-sm text-white/70" aria-live="polite" />
+        )
+      }
+
+      <p class="min-w-0 text-center text-sm text-white/80">
+        <span data-galeria-pie></span>
+        {
+          capturas.length > 1 && (
+            <span data-galeria-contador class="ml-2 whitespace-nowrap text-white/50" aria-live="polite" />
+          )
+        }
+      </p>
+
+      {
+        capturas.length > 1 && (
           <button
             type="button"
             data-galeria-siguiente
-            class="grid size-10 place-items-center rounded-full border border-white/30 text-white transition-colors hover:bg-white/10"
+            class="grid size-10 shrink-0 place-items-center rounded-full border border-white/25 text-white transition-colors hover:bg-white/15"
             aria-label={t('gallery.next')}
           >
             <Icon name="arrowRight" class="size-4" />
           </button>
-        </div>
-      )
-    }
-  </div>
+        )
+      }
+    </figcaption>
+  </figure>
 </dialog>
 
 <script>
@@ -117,9 +143,22 @@ const t = useTranslations(locale);
     const contador = dialogo.querySelector<HTMLElement>('[data-galeria-contador]');
     let actual = 0;
 
+    /**
+     * Las capturas se declaran `lazy` para no descargarlas al abrir la página,
+     * pero mientras están ocultas el navegador no tiene motivo para pedirlas.
+     * Al mostrarlas hay que pasarlas a `eager`, si no el visor puede quedar en
+     * blanco. Se adelantan también la anterior y la siguiente, así navegar con
+     * las flechas es instantáneo.
+     */
+    const precargar = (indice: number) => {
+      const imagen = imagenes[(indice + imagenes.length) % imagenes.length];
+      if (imagen && imagen.loading !== 'eager') imagen.loading = 'eager';
+    };
+
     const mostrar = (indice: number) => {
       actual = (indice + imagenes.length) % imagenes.length;
       imagenes.forEach((imagen, i) => (imagen.hidden = i !== actual));
+      [actual, actual - 1, actual + 1].forEach(precargar);
       if (pie) pie.textContent = imagenes[actual]?.dataset.alt ?? '';
       if (contador) contador.textContent = `${actual + 1} / ${imagenes.length}`;
     };
