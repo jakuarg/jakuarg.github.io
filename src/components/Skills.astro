@@ -1,7 +1,8 @@
 ---
 import type { Locale } from '@/site.config';
 import { useTranslations } from '@/i18n/utils';
-import { hardSkills, softSkills } from '@/data/content';
+import { hardSkills, skillGroups, softSkills, type SkillGroup } from '@/data/content';
+import type { UIKey } from '@/i18n/ui';
 import Section from './Section.astro';
 import Icon from './Icon.astro';
 
@@ -11,36 +12,53 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
+
+/** Se arma la lista por grupo una sola vez, respetando el orden declarado. */
+const porGrupo = skillGroups
+  .map((grupo: SkillGroup) => ({
+    grupo,
+    titulo: t(`skills.group.${grupo}` as UIKey),
+    habilidades: hardSkills.filter((skill) => skill.group === grupo),
+  }))
+  .filter((seccion) => seccion.habilidades.length > 0);
 ---
 
 <Section id="skills" kicker={t('section.skills.kicker')} title={t('section.skills')}>
-  <h3 class="reveal text-muted mb-5 text-sm font-semibold tracking-wide uppercase">
-    {t('section.skills.hard')}
-  </h3>
-  <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <p class="reveal text-muted mb-8 max-w-prose text-sm">{t('skills.legend')}</p>
+
+  <div class="space-y-8">
     {
-      hardSkills.map((skill, index) => (
-        <li
-          class="surface-card spotlight reveal group p-5 transition-transform duration-300 hover:-translate-y-1"
-          style={`transition-delay: ${index * 40}ms`}
-        >
-          <div class="mb-3 flex items-center justify-between gap-3">
-            <h4 class="font-display text-base font-semibold">{skill.name}</h4>
-            <span class="flex gap-1" role="img" aria-label={`${skill.level}/5`}>
-              {Array.from({ length: 5 }, (_, i) => (
-                <span
-                  class:list={['size-1.5 rounded-full', i < skill.level ? 'bg-brand-500' : 'bg-[var(--border-subtle)]']}
-                />
-              ))}
-            </span>
-          </div>
-          <p class="text-muted text-sm leading-relaxed">{skill.detail[locale]}</p>
-        </li>
+      porGrupo.map(({ grupo, titulo, habilidades }) => (
+        <section class="reveal" aria-labelledby={`skills-${grupo}`}>
+          <h3 id={`skills-${grupo}`} class="text-muted mb-3 text-xs font-semibold tracking-[0.15em] uppercase">
+            {titulo}
+          </h3>
+          <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {habilidades.map((skill) => (
+              <li class="surface-card spotlight p-4">
+                <div class="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                  <h4 class="font-display text-base font-semibold">{skill.name}</h4>
+                  <span
+                    class:list={[
+                      'rounded-full px-2 py-0.5 text-xs font-medium',
+                      skill.usage === 'proyectos'
+                        ? 'bg-brand-500/10 text-brand-700 dark:text-brand-300'
+                        : 'text-muted border-subtle border',
+                    ]}
+                  >
+                    {t(`skills.usage.${skill.usage}` as UIKey)}
+                  </span>
+                </div>
+                <p class="text-muted text-sm leading-relaxed">{skill.detail[locale]}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
       ))
     }
-  </ul>
+  </div>
 
-  <h3 class="reveal text-muted mt-14 mb-5 text-sm font-semibold tracking-wide uppercase">
+  <h3 class="reveal text-muted mt-12 mb-4 text-xs font-semibold tracking-[0.15em] uppercase">
     {t('section.skills.soft')}
   </h3>
   <ul class="reveal flex flex-wrap gap-2.5">

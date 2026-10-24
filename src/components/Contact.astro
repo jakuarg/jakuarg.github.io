@@ -59,14 +59,17 @@ const details = [
     <ul class="reveal space-y-3">
       {
         details.map((detail) => (
-          <li class="surface-card spotlight flex items-center gap-4 p-4">
+          <li class="surface-card spotlight relative flex items-center gap-4 p-4">
             <span class="bg-brand-500/10 text-brand-600 dark:text-brand-300 grid size-10 shrink-0 place-items-center rounded-full">
               <Icon name={detail.icon} class="size-[18px]" />
             </span>
             <span class="min-w-0">
               <span class="text-muted block text-xs">{detail.label}</span>
               {detail.href ? (
-                <a href={detail.href} class="hover:text-brand-600 dark:hover:text-brand-300 block truncate font-medium">
+                <a
+                  href={detail.href}
+                  class="hover:text-brand-600 dark:hover:text-brand-300 block truncate font-medium after:absolute after:inset-0"
+                >
                   {detail.value}
                 </a>
               ) : (
@@ -78,7 +81,7 @@ const details = [
       }
       {
         socials.map((social) => (
-          <li class="surface-card spotlight flex items-center gap-4 p-4">
+          <li class="surface-card spotlight relative flex items-center gap-4 p-4">
             <span class="bg-brand-500/10 text-brand-600 dark:text-brand-300 grid size-10 shrink-0 place-items-center rounded-full">
               <Icon name={social.icon} class="size-[18px]" />
             </span>
@@ -88,7 +91,7 @@ const details = [
                 href={social.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="hover:text-brand-600 dark:hover:text-brand-300 block truncate font-medium"
+                class="hover:text-brand-600 dark:hover:text-brand-300 block truncate font-medium after:absolute after:inset-0"
               >
                 {social.href.replace('https://', '')}
               </a>

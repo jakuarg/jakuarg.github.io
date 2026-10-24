@@ -36,15 +36,13 @@ export const profile = {
   about: {
     es: [
       'Estudio Ingeniería en Sistemas de Información en la Universidad Tecnológica Nacional (FRT) desde 2019, y en paralelo me formé en programación full stack con Oracle Alumni, Fundación León y Argentina Programa.',
-      'Hoy trabajo sobre dos sistemas completos. El más grande es el CCE, una plataforma de gestión académica para un colegio de más de 500 estudiantes: web en Node.js y PostgreSQL, una aplicación Android en Kotlin que toma asistencia sin conexión y sincroniza al volver la señal, y el sitio institucional. Está instalado y en pruebas. En paralelo desarrollo POS Autopartes, un punto de venta en C# .NET y WinUI 3, el primero que preparo para vender.',
-      'Me muevo cómodo entre el back-end y los datos —diseño de esquemas, sincronización, auditoría— y llego hasta la interfaz cuando hace falta. Los primeros sistemas los construí en un marco académico y de investigación; los de ahora tienen que funcionar con gente usándolos.',
-      'Me interesa el trabajo en equipo, el código ordenado y las soluciones que resuelven un problema concreto, no solo el requisito técnico.',
+      'Construyo sistemas de gestión completos, de la base de datos a la interfaz. El más grande es el CCE, una plataforma académica para un colegio de más de 500 estudiantes, con web, aplicación Android que funciona sin conexión y sitio institucional; está instalado y en pruebas. En paralelo desarrollo POS Autopartes, un punto de venta en C# .NET, el primero que preparo para vender.',
+      'Donde más cómodo me muevo es en el back-end y los datos: diseño de esquemas, sincronización y auditoría. Me interesa el trabajo en equipo y el código que resuelve un problema concreto, no solo el requisito técnico.',
     ],
     en: [
       'I have been studying Information Systems Engineering at Universidad Tecnológica Nacional (FRT) since 2019, while also training in full stack development through Oracle Alumni, Fundación León and Argentina Programa.',
-      'I am currently working on two complete systems. The larger one is CCE, an academic management platform for a school with more than 500 students: a web application in Node.js and PostgreSQL, an Android app in Kotlin that records attendance offline and syncs once the signal returns, and the institutional site. It is installed and under testing. Alongside it I am building POS Autopartes, a point-of-sale system in C# .NET and WinUI 3, the first one I am preparing to sell.',
-      'I am comfortable across the back-end and the data layer — schema design, synchronization, auditing — and I go all the way to the interface when it is needed. My earlier systems were built in an academic and research setting; the current ones have to hold up with people using them.',
-      'I care about teamwork, clean code and solutions that address an actual problem, not just a technical requirement.',
+      'I build complete management systems, from the database to the interface. The largest is CCE, an academic platform for a school with more than 500 students, with a web application, an Android app that works offline and an institutional site; it is installed and under testing. Alongside it I am building POS Autopartes, a point-of-sale system in C# .NET, the first one I am preparing to sell.',
+      'I am most comfortable on the back-end and the data layer: schema design, synchronization and auditing. I care about teamwork and about code that solves an actual problem, not just a technical requirement.',
     ],
   },
 } as const;
@@ -77,48 +75,71 @@ export const stats = [
     },
   },
   {
-    value: '295h',
-    label: { es: 'de formación complementaria', en: 'of complementary training' },
+    value: '3',
+    label: {
+      es: 'plataformas: web, Android y escritorio',
+      en: 'platforms: web, Android and desktop',
+    },
   },
 ] as const;
 
 /* ------------------------------------------------------------- habilidades */
 
+/**
+ * Las habilidades se agrupan por categoría y, en vez de un nivel numérico, cada
+ * una declara cómo se adquirió. Un puntaje del 1 al 5 parece una evaluación
+ * objetiva sin que haya un criterio detrás; esto se puede defender en una
+ * entrevista.
+ *
+ * - `proyectos`: usada en al menos uno de los proyectos listados más abajo.
+ * - `formacion`: viene de los cursos o de la carrera, sin proyecto propio aún.
+ */
+export type SkillUsage = 'proyectos' | 'formacion';
+
+export type SkillGroup = 'backend' | 'escritorio' | 'frontend' | 'herramientas';
+
 export type HardSkill = {
   name: string;
+  group: SkillGroup;
+  usage: SkillUsage;
   detail: Localized<string>;
-  /** Nivel autoevaluado 1-5, se usa solo como apoyo visual. */
-  level: 1 | 2 | 3 | 4 | 5;
 };
+
+/** Orden en que se muestran los grupos. */
+export const skillGroups: SkillGroup[] = ['backend', 'escritorio', 'frontend', 'herramientas'];
 
 export const hardSkills: HardSkill[] = [
   {
     name: 'C# .NET',
-    level: 4,
+    group: 'backend',
+    usage: 'proyectos',
     detail: {
       es: 'Programación orientada a objetos, capa de servicios y acceso a datos.',
       en: 'Object-oriented programming, service layer and data access.',
     },
   },
   {
-    name: 'WinUI 3',
-    level: 4,
+    name: 'Node.js y Express',
+    group: 'backend',
+    usage: 'proyectos',
     detail: {
-      es: 'Aplicaciones de escritorio con XAML, patrón MVVM y controles propios.',
-      en: 'Desktop applications with XAML, the MVVM pattern and custom controls.',
+      es: 'API de la plataforma web del CCE: autenticación, permisos y auditoría.',
+      en: 'API behind the CCE web platform: authentication, permissions and auditing.',
     },
   },
   {
     name: 'PostgreSQL',
-    level: 4,
+    group: 'backend',
+    usage: 'proyectos',
     detail: {
-      es: 'Modelado de esquemas, consultas y sincronización con una réplica local.',
-      en: 'Schema modelling, queries and synchronization against a local replica.',
+      es: 'Modelado de esquemas, migraciones versionadas y sincronización con réplicas locales.',
+      en: 'Schema modelling, versioned migrations and synchronization with local replicas.',
     },
   },
   {
     name: 'SQL',
-    level: 4,
+    group: 'backend',
+    usage: 'proyectos',
     detail: {
       es: 'Diseño de bases y consultas sobre PostgreSQL, SQLite, MySQL y SQL Server.',
       en: 'Schema design and queries over PostgreSQL, SQLite, MySQL and SQL Server.',
@@ -126,32 +147,62 @@ export const hardSkills: HardSkill[] = [
   },
   {
     name: 'Java',
-    level: 3,
+    group: 'backend',
+    usage: 'formacion',
     detail: {
-      es: 'CRUD con MySQL, back-end orientado a objetos.',
-      en: 'CRUD with MySQL, object-oriented back-end.',
+      es: 'Back-end orientado a objetos y CRUD con MySQL, en la formación de Oracle Alumni.',
+      en: 'Object-oriented back-end and CRUD with MySQL, from the Oracle Alumni training.',
     },
   },
   {
-    // Nombre neutro: se lee igual en las dos versiones del sitio.
-    name: 'HTML5 / CSS',
-    level: 3,
+    name: 'WinUI 3',
+    group: 'escritorio',
+    usage: 'proyectos',
     detail: {
-      es: 'Maquetado responsive con variables CSS.',
-      en: 'Responsive layouts using CSS variables.',
+      es: 'Aplicaciones de escritorio con XAML, patrón MVVM y controles propios.',
+      en: 'Desktop applications with XAML, the MVVM pattern and custom controls.',
+    },
+  },
+  {
+    name: 'Kotlin y Jetpack Compose',
+    group: 'escritorio',
+    usage: 'proyectos',
+    detail: {
+      es: 'App Android del CCE: toma de asistencia sin conexión y sincronización diferida.',
+      en: 'CCE Android app: offline attendance capture and deferred synchronization.',
     },
   },
   {
     name: 'JavaScript',
-    level: 3,
+    group: 'frontend',
+    usage: 'proyectos',
     detail: {
       es: 'Interactividad en el front-end y consumo de datos.',
       en: 'Front-end interactivity and data consumption.',
     },
   },
   {
+    name: 'Next.js',
+    group: 'frontend',
+    usage: 'proyectos',
+    detail: {
+      es: 'Sitio institucional del CCE, con el formulario de preinscripción integrado.',
+      en: 'CCE institutional site, with the pre-enrolment form wired in.',
+    },
+  },
+  {
+    name: 'HTML5 / CSS',
+    group: 'frontend',
+    usage: 'proyectos',
+    detail: {
+      es: 'Maquetado responsive con variables CSS.',
+      en: 'Responsive layouts using CSS variables.',
+    },
+  },
+  {
     name: 'Git',
-    level: 3,
+    group: 'herramientas',
+    usage: 'proyectos',
     detail: {
       es: 'Versionado con flujo de trabajo normalizado.',
       en: 'Versioning with a normalized workflow.',
@@ -159,7 +210,8 @@ export const hardSkills: HardSkill[] = [
   },
   {
     name: 'UML',
-    level: 3,
+    group: 'herramientas',
+    usage: 'proyectos',
     detail: {
       es: 'Análisis y diseño de sistemas antes de implementar.',
       en: 'Systems analysis and design prior to implementation.',

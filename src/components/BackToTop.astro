@@ -1,0 +1,44 @@
+---
+import type { Locale } from '@/site.config';
+import { useTranslations } from '@/i18n/utils';
+import Icon from './Icon.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+{/* La página es larga; aparece recién después de un par de pantallas. */}
+<button
+  type="button"
+  data-back-to-top
+  hidden
+  class="surface-card hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-300 fixed right-5 bottom-5 z-30 grid size-11 place-items-center rounded-full shadow-lg transition-colors"
+  aria-label={t('nav.top')}
+  title={t('nav.top')}
+>
+  <Icon name="arrowRight" class="size-4 -rotate-90" />
+</button>
+
+<script>
+  const boton = document.querySelector<HTMLButtonElement>('[data-back-to-top]');
+
+  if (boton) {
+    const actualizar = () => {
+      boton.hidden = window.scrollY < window.innerHeight * 2;
+    };
+
+    actualizar();
+    window.addEventListener('scroll', actualizar, { passive: true });
+
+    boton.addEventListener('click', () => {
+      // Respeta la preferencia de movimiento reducido del sistema.
+      const suave = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: suave ? 'smooth' : 'instant' });
+      document.getElementById('main')?.focus({ preventScroll: true });
+    });
+  }
+</script>
