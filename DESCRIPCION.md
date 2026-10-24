@@ -21,13 +21,31 @@ complemento del CV en PDF, que se puede descargar desde el propio sitio.
 | **Inicio**      | Nombre, rol, eslogan, accesos a proyectos y contacto, descarga del CV y tres cifras clave |
 | **Sobre mí**    | Trayectoria, objetivo profesional e idiomas con su nivel                                  |
 | **Habilidades** | Siete técnicas con nivel y descripción, más nueve blandas                                 |
-| **Proyectos**   | Tres proyectos con resumen, logros, rol, tecnologías y capturas                           |
+| **Proyectos**   | Cuatro proyectos con resumen, logros, tecnologías, cifras y capturas                      |
 | **Formación**   | Línea de tiempo con la carrera y cuatro formaciones complementarias                       |
 | **Contacto**    | Correo, teléfono, ubicación, GitHub y LinkedIn                                            |
 
 ### Los proyectos
 
-1. **POS Autopartes** (2025 — actualidad) — Punto de venta y gestión de stock
+1. **CCE — Centro de Calificaciones Estudiantiles** (2026, en pruebas) —
+   Sistema integral de gestión académica para el Colegio Agrotécnico N.º 2
+   «María Auxiliadora», una institución de más de 500 estudiantes. Centraliza
+   calificaciones, asistencias, boletines, estadísticas y comunicación
+   institucional en tres piezas conectadas: una plataforma web en Node.js,
+   Express y PostgreSQL; una aplicación Android en Kotlin y Jetpack Compose que
+   toma asistencia sin conexión y sincroniza al recuperar la señal; y el sitio
+   institucional público en Next.js, desde donde se inician las preinscripciones.
+
+   Está instalado y en pruebas con datos ficticios durante 2026; el uso
+   académico real se proyecta para el ciclo lectivo 2027. Las cifras medidas:
+   150 usuarios concurrentes en prueba de carga, 58 ms de p95 máximo, 55 pruebas
+   de humo automatizadas y 35 migraciones versionadas.
+
+   Es el único proyecto con **página propia de caso de estudio**, donde se
+   explica la arquitectura, el recorrido de la información y la operación móvil
+   sin conexión.
+
+2. **POS Autopartes** (2025 — actualidad) — Punto de venta y gestión de stock
    para comercios de autopartes, en C# .NET y WinUI 3 sobre PostgreSQL, con
    espejo local en SQLite. Multi-sucursal y multi-terminal, modo offline con
    sincronización incremental, auditoría campo por campo y roles de tres
@@ -35,12 +53,12 @@ complemento del CV en PDF, que se puede descargar desde el propio sitio.
    Se acompaña de seis capturas y de las cifras del sistema: 12.141 líneas,
    38 servicios, 19 pantallas y 15 tablas.
 
-2. **Transporte Leila S.A.S.** (2020 — 2024) — Sistema de gestión empresarial
+3. **Transporte Leila S.A.S.** (2020 — 2024) — Sistema de gestión empresarial
    desarrollado como parte de una investigación de Ingeniería en Sistemas,
    tomando una empresa familiar de transporte del NOA como caso de estudio.
    Trabajo académico; no llegó a implementarse.
 
-3. **Teatro Municipal Rosita Ávila** (2021 — 2022) — Sistema de gestión de
+4. **Teatro Municipal Rosita Ávila** (2021 — 2022) — Sistema de gestión de
    butacas digital, desarrollado en equipo como práctica de implementación para
    la Fundación León.
 
@@ -59,6 +77,16 @@ aplica antes del primer pintado, así que no hay parpadeo al cargar.
 
 Las capturas de los proyectos acompañan al tema: hay un juego tomado con la
 aplicación en claro y otro en oscuro, y el sitio muestra el que corresponde.
+
+### Páginas de caso de estudio
+
+Los proyectos que lo justifican tienen, además de su tarjeta, una página propia
+con el detalle completo: arquitectura, decisiones y resultados. Hoy la tiene el
+CCE, en los dos idiomas, bajo `/projects/cce` y `/en/projects/cce`.
+
+Desde esas páginas la navegación sigue funcionando: el menú vuelve a la sección
+correspondiente de la portada y el selector de idioma se queda en la misma
+página en vez de mandar al inicio.
 
 ### Galería de capturas
 

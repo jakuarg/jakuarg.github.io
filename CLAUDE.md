@@ -120,6 +120,38 @@ Tres cosas que lo rompen si se tocan:
 sintéticos y las capturas programáticas no lo muestran encendido aunque esté
 funcionando perfecto. Se prueba a mano.
 
+### Proyectos con página propia
+
+Un proyecto puede tener una página de caso de estudio además de su tarjeta en la
+home. El patrón, usando el CCE como referencia:
+
+- En `content.ts`, el proyecto declara `caseStudyPath: '/projects/<slug>'`. Eso
+  solo hace aparecer el distintivo de destacado y el botón hacia la página; la
+  ruta hay que crearla aparte.
+- El contenido largo vive en su propio componente (`CceCaseStudy.astro`), con
+  los textos de esa página adentro, no en `content.ts`. `content.ts` guarda lo
+  que comparten la tarjeta y la página.
+- Las rutas se crean **dos veces**, una por idioma: `src/pages/projects/<slug>.astro`
+  y `src/pages/en/projects/<slug>.astro`, cada una de dos líneas pasando el
+  locale, igual que la home.
+- El enlace se arma con `localizePath(project.caseStudyPath, locale)`, nunca a
+  mano.
+
+Campos opcionales de proyecto que conviene conocer:
+
+- `status` reemplaza al período en la tarjeta cuando el proyecto no entra en un
+  rango de fechas limpio (el CCE usa «En pruebas · 2026»).
+- `href` es el sitio público; agrega un segundo botón junto al del caso de
+  estudio.
+- `role` es opcional: los proyectos que no lo declaran no muestran esa línea.
+
+### El header se adapta a las páginas internas
+
+Los enlaces del menú son anclas (`#about`, `#projects`…), que solo funcionan
+estando en la home. Desde una página interna se les antepone la ruta de la home,
+y el selector de idioma conserva la página actual en vez de volver al inicio.
+Si se agregan páginas internas nuevas, esto ya funciona solo.
+
 ### Galería de capturas
 
 Las capturas se leen con `import.meta.glob` desde
@@ -178,9 +210,12 @@ URL: https://jakuarg.github.io
 - El sistema de **Transporte Leila** fue un trabajo académico y de
   investigación: **nunca se implementó en producción**. El texto del sitio lo
   dice explícitamente. No describirlo como un sistema en producción.
-- **POS Autopartes** es el proyecto actual y el primero pensado para venderse.
-  Las cifras de la tarjeta (12.141 líneas, 38 servicios, 19 pantallas, 15
-  tablas) salieron de medir el repositorio `POSAutopartes_WINUI`.
+- El **CCE** está **instalado y en pruebas con datos ficticios** durante 2026;
+  el uso académico real se proyecta para el ciclo 2027. No describirlo como un
+  sistema en producción ni decir que ya lo usan los 500 estudiantes.
+- **POS Autopartes** es el otro proyecto actual y el primero pensado para
+  venderse. Las cifras de la tarjeta (12.141 líneas, 38 servicios, 19 pantallas,
+  15 tablas) salieron de medir el repositorio `POSAutopartes_WINUI`.
 - El análisis comercial del POS (precios, mantenimiento, debilidades conocidas)
   se dejó **deliberadamente fuera** del sitio: es estrategia de negocio y un
   mapa de debilidades, no material de portfolio.

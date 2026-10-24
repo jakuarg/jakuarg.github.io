@@ -36,13 +36,15 @@ export const profile = {
   about: {
     es: [
       'Estudio Ingeniería en Sistemas de Información en la Universidad Tecnológica Nacional (FRT) desde 2019, y en paralelo me formé en programación full stack con Oracle Alumni, Fundación León y Argentina Programa.',
-      'Mi experiencia más fuerte está en el escritorio y en los datos: diseño de bases, operaciones CRUD y aplicaciones en C# .NET, hoy con WinUI 3. Los primeros sistemas los construí en un marco académico y de investigación; el que estoy desarrollando ahora, un punto de venta para autopartes, es el primero pensado para venderse.',
-      'Me interesa el trabajo en equipo, el código ordenado y las soluciones que resuelven un problema concreto del negocio, no solo el requisito técnico.',
+      'Hoy trabajo sobre dos sistemas completos. El más grande es el CCE, una plataforma de gestión académica para un colegio de más de 500 estudiantes: web en Node.js y PostgreSQL, una aplicación Android en Kotlin que toma asistencia sin conexión y sincroniza al volver la señal, y el sitio institucional. Está instalado y en pruebas. En paralelo desarrollo POS Autopartes, un punto de venta en C# .NET y WinUI 3, el primero que preparo para vender.',
+      'Me muevo cómodo entre el back-end y los datos —diseño de esquemas, sincronización, auditoría— y llego hasta la interfaz cuando hace falta. Los primeros sistemas los construí en un marco académico y de investigación; los de ahora tienen que funcionar con gente usándolos.',
+      'Me interesa el trabajo en equipo, el código ordenado y las soluciones que resuelven un problema concreto, no solo el requisito técnico.',
     ],
     en: [
       'I have been studying Information Systems Engineering at Universidad Tecnológica Nacional (FRT) since 2019, while also training in full stack development through Oracle Alumni, Fundación León and Argentina Programa.',
-      'My strongest experience is on the desktop and with data: schema design, CRUD operations and C# .NET applications, today with WinUI 3. My earlier systems were built in an academic and research setting; the one I am working on now, a point-of-sale system for an auto parts shop, is the first one meant to be sold.',
-      'I care about teamwork, clean code and solutions that address an actual business problem, not just a technical requirement.',
+      'I am currently working on two complete systems. The larger one is CCE, an academic management platform for a school with more than 500 students: a web application in Node.js and PostgreSQL, an Android app in Kotlin that records attendance offline and syncs once the signal returns, and the institutional site. It is installed and under testing. Alongside it I am building POS Autopartes, a point-of-sale system in C# .NET and WinUI 3, the first one I am preparing to sell.',
+      'I am comfortable across the back-end and the data layer — schema design, synchronization, auditing — and I go all the way to the interface when it is needed. My earlier systems were built in an academic and research setting; the current ones have to hold up with people using them.',
+      'I care about teamwork, clean code and solutions that address an actual problem, not just a technical requirement.',
     ],
   },
 } as const;
@@ -68,10 +70,10 @@ export const stats = [
     label: { es: 'años estudiando ingeniería', en: 'years studying engineering' },
   },
   {
-    value: '12k',
+    value: '4',
     label: {
-      es: 'líneas en el sistema que desarrollo hoy',
-      en: 'lines in the system I am building today',
+      es: 'sistemas de gestión construidos',
+      en: 'management systems built',
     },
   },
   {
