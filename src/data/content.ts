@@ -204,10 +204,15 @@ export type Project = {
   stack: string[];
   /** Enlace al repositorio o demo; `null` si el proyecto es privado. */
   href: string | null;
+  /** Ruta interna al caso de estudio, si el proyecto tiene una página propia. */
+  caseStudyPath?: string;
+  /** Estado visible cuando aporta más contexto que el período. */
+  status?: Localized<string>;
   org: Localized<string>;
   title: Localized<string>;
   summary: Localized<string>;
-  role: Localized<string>;
+  /** Se omite cuando no hay una contribución individual verificada para publicar. */
+  role?: Localized<string>;
   highlights: Localized<string[]>;
   /** Cifras del proyecto; se muestran como fichas. Opcional. */
   metrics?: { value: string; label: Localized<string> }[];
@@ -219,6 +224,47 @@ export type Project = {
 };
 
 export const projects: Project[] = [
+  {
+    slug: 'cce',
+    period: '2026',
+    current: false,
+    stack: ['Node.js', 'Express', 'PostgreSQL', 'Kotlin', 'Jetpack Compose', 'Next.js'],
+    href: 'https://agrotecnico2.duckdns.org/',
+    caseStudyPath: '/projects/cce',
+    status: { es: 'En pruebas · 2026', en: 'In testing · 2026' },
+    org: {
+      es: 'Colegio Agrotécnico N.º 2 «María Auxiliadora»',
+      en: 'Agrotechnical School No. 2 “María Auxiliadora”',
+    },
+    title: {
+      es: 'CCE — Centro de Calificaciones Estudiantiles',
+      en: 'CCE — Student Grades Centre',
+    },
+    summary: {
+      es: 'Sistema integral de gestión académica para una institución de más de 500 estudiantes. Centraliza calificaciones, asistencias, boletines, estadísticas y comunicación institucional mediante una plataforma web y una aplicación Android que funciona sin conexión.',
+      en: 'An integrated academic management system for an institution with more than 500 students. It centralizes grades, attendance, report cards, statistics and institutional communication through a web platform and an Android application that works offline.',
+    },
+    highlights: {
+      es: [
+        'La plataforma web reúne gestión de cursos, matrículas, calificaciones, asistencia, documentación, estadísticas, usuarios, permisos, auditoría y respaldos.',
+        'La aplicación Android registra asistencia sin conexión, conserva los cambios localmente y los sincroniza al recuperar la conectividad.',
+        'El sitio institucional público presenta la propuesta educativa y permite iniciar preinscripciones integradas al CCE.',
+        'Está instalado y en pruebas con datos ficticios durante 2026; el uso académico real se proyecta para el ciclo lectivo 2027.',
+      ],
+      en: [
+        'The web platform brings together course management, enrolments, grades, attendance, documents, statistics, users, permissions, auditing and backups.',
+        'The Android application records attendance offline, keeps changes locally and syncs them once connectivity returns.',
+        'The public institutional site presents the school’s educational offering and starts pre-enrolments integrated with CCE.',
+        'It is installed and being tested with fictional data during 2026; actual academic use is planned for the 2027 school year.',
+      ],
+    },
+    metrics: [
+      { value: '150 / 150', label: { es: 'usuarios en prueba concurrente', en: 'users in a concurrent test' } },
+      { value: '58 ms', label: { es: 'máximo p95 medido', en: 'highest measured p95' } },
+      { value: '55', label: { es: 'pruebas de humo automatizadas', en: 'automated smoke tests' } },
+      { value: '35', label: { es: 'migraciones versionadas', en: 'versioned migrations' } },
+    ],
+  },
   {
     slug: 'pos-autopartes',
     period: '2025',
@@ -352,6 +398,183 @@ export const projects: Project[] = [
     },
   },
 ];
+
+/* ---------------------------------------------------- caso de estudio CCE */
+
+export const cceCaseStudy = {
+  eyebrow: { es: 'Caso de estudio · 2026', en: 'Case study · 2026' },
+  title: {
+    es: 'CCE — Centro de Calificaciones Estudiantiles',
+    en: 'CCE — Student Grades Centre',
+  },
+  lead: {
+    es: 'De necesidades institucionales reales a una plataforma web y móvil con arquitectura modular, control de acceso, sincronización offline y pruebas verificables.',
+    en: 'From real institutional needs to a web and mobile platform with modular architecture, access control, offline synchronization and verifiable testing.',
+  },
+  status: {
+    es: 'En pruebas con datos ficticios durante 2026. Uso académico real previsto para 2027.',
+    en: 'In testing with fictional data during 2026. Actual academic use is planned for 2027.',
+  },
+  context: {
+    es: 'Proyecto para el Colegio Agrotécnico N.º 2 «María Auxiliadora», en Nueva Esperanza, Santiago del Estero: una institución con más de 500 estudiantes, conectividad irregular y equipos modestos.',
+    en: 'A project for Agrotechnical School No. 2 “María Auxiliadora” in Nueva Esperanza, Santiago del Estero: an institution with more than 500 students, intermittent connectivity and modest hardware.',
+  },
+  challenge: {
+    title: { es: 'El desafío', en: 'The challenge' },
+    lead: {
+      es: 'La gestión académica necesitaba reunir la información dispersa entre distintos actores y conservar una trazabilidad confiable durante años.',
+      en: 'Academic management needed to bring together information distributed across different roles and preserve a reliable history over time.',
+    },
+    items: {
+      es: [
+        'Centralizar calificaciones, asistencia, boletines, legajos, mesas de examen, constancias y estadísticas.',
+        'Asignar permisos precisos a administrador, director, secretario, asesor pedagógico, preceptor, profesor, alumno y tutor.',
+        'Mantener el trabajo posible cuando falla la conexión y los dispositivos son limitados.',
+      ],
+      en: [
+        'Centralize grades, attendance, report cards, student records, exam sessions, certificates and statistics.',
+        'Assign precise permissions to administrators, principals, secretaries, pedagogical advisors, school staff, teachers, students and guardians.',
+        'Keep work possible when connectivity fails and devices are limited.',
+      ],
+    },
+  },
+  platforms: [
+    {
+      title: { es: 'Web administrativa', en: 'Administrative web' },
+      text: {
+        es: 'Gestiona cursos, materias, matrículas, calificaciones, asistencia, documentos, estadísticas, usuarios y permisos.',
+        en: 'Manages courses, subjects, enrolments, grades, attendance, documents, statistics, users and permissions.',
+      },
+      stack: ['Node.js', 'Express', 'PostgreSQL'],
+    },
+    {
+      title: { es: 'Android offline-first', en: 'Offline-first Android' },
+      text: {
+        es: 'Registra asistencia en Room, encola cambios pendientes y los sincroniza con WorkManager cuando vuelve la conexión.',
+        en: 'Records attendance in Room, queues pending changes and syncs them through WorkManager when connectivity returns.',
+      },
+      stack: ['Kotlin', 'Jetpack Compose', 'Room', 'WorkManager'],
+    },
+    {
+      title: { es: 'Sitio institucional', en: 'Institutional site' },
+      text: {
+        es: 'Presenta la propuesta educativa de la escuela y conecta las preinscripciones con el sistema.',
+        en: 'Presents the school’s educational offering and connects pre-enrolments with the system.',
+      },
+      stack: ['Next.js', 'React', 'TypeScript'],
+    },
+  ],
+  architecture: {
+    title: { es: 'Arquitectura pensada para el contexto', en: 'Architecture shaped by the context' },
+    lead: {
+      es: 'El backend separa rutas, middlewares, controladores, servicios, repositorios y adaptadores de base de datos. Esto permite que la aplicación web, Android y el sitio público compartan reglas claras sin mezclar responsabilidades.',
+      en: 'The backend separates routes, middleware, controllers, services, repositories and database adapters. This lets the web app, Android app and public site share clear rules without mixing responsibilities.',
+    },
+    flow: {
+      es: ['Navegador web', 'Caddy / HTTPS', 'CCE Web y API', 'PostgreSQL'],
+      en: ['Web browser', 'Caddy / HTTPS', 'CCE Web and API', 'PostgreSQL'],
+    },
+    mobile: {
+      es: 'La aplicación Android se conecta mediante la API REST y usa Room para el almacenamiento local. WorkManager administra la sincronización, los reintentos y la cola de cambios pendientes.',
+      en: 'The Android application connects through the REST API and uses Room for local storage. WorkManager manages synchronization, retries and the queue of pending changes.',
+    },
+  },
+  quality: {
+    title: { es: 'Calidad y resguardo de la información', en: 'Quality and information safeguards' },
+    items: {
+      es: [
+        'RBAC y permisos por ruta y operación para cada perfil institucional.',
+        'Contraseñas protegidas con bcrypt, sesiones, protección CSRF, control de intentos y auditoría.',
+        'Restricciones de integridad, transacciones ACID y respaldos automáticos diarios.',
+        'Criterios offline explícitos: la asistencia puede encolarse; la emisión de boletines no se difiere.',
+      ],
+      en: [
+        'RBAC and route- and operation-level permissions for each institutional profile.',
+        'Passwords protected with bcrypt, sessions, CSRF protection, attempt controls and auditing.',
+        'Integrity constraints, ACID transactions and daily automated backups.',
+        'Explicit offline criteria: attendance can be queued; report-card issuance is not deferred.',
+      ],
+    },
+  },
+  metrics: [
+    {
+      value: '150 / 150',
+      label: { es: 'usuarios sin errores', en: 'users without errors' },
+      detail: {
+        es: 'Prueba controlada con sesiones concurrentes; no representa una capacidad garantizada en producción.',
+        en: 'A controlled test with concurrent sessions; it does not represent guaranteed production capacity.',
+      },
+    },
+    {
+      value: '58 ms',
+      label: { es: 'máximo p95 frecuente', en: 'highest frequent-operation p95' },
+      detail: {
+        es: 'Máximo entre 11 operaciones evaluadas con 30 repeticiones, medido localmente sin red.',
+        en: 'Highest value across 11 operations evaluated with 30 repetitions, measured locally without network latency.',
+      },
+    },
+    {
+      value: '55',
+      label: { es: 'pruebas de humo', en: 'smoke tests' },
+      detail: {
+        es: 'Pruebas automatizadas que incluyen escenarios transversales.',
+        en: 'Automated tests that include cross-cutting scenarios.',
+      },
+    },
+    {
+      value: '35',
+      label: { es: 'migraciones versionadas', en: 'versioned migrations' },
+      detail: {
+        es: 'Archivos de migración para acompañar la evolución del esquema.',
+        en: 'Migration files that support the schema’s evolution.',
+      },
+    },
+  ],
+  performanceNote: {
+    es: 'La prueba detectó que 100 inicios de sesión simultáneos saturaban el grupo de hilos por el costo deliberado de bcrypt. Tras ajustar esa configuración, el p95 de navegación con 100 usuarios pasó de 5.255 ms a 610 ms. El inicio masivo aún midió 3.192 ms, por encima del umbral de 2 s.',
+    en: 'Testing found that 100 simultaneous logins saturated the thread pool because of bcrypt’s deliberate cost. After adjusting that configuration, navigation p95 with 100 users went from 5,255 ms to 610 ms. Mass login still measured 3,192 ms, above the 2-second threshold.',
+  },
+  measurementNote: {
+    es: 'Resultados obtenidos en pruebas locales controladas, con datos de demostración y sin latencia de red. Deben repetirse en el hardware y contexto operativo final.',
+    en: 'Results obtained in controlled local tests with demonstration data and no network latency. They must be repeated in the final hardware and operating context.',
+  },
+  next: {
+    title: { es: 'Estado y próximos pasos', en: 'Status and next steps' },
+    lead: {
+      es: 'El sistema está instalado en el servidor institucional y se prueba con datos ficticios durante 2026. Antes del uso académico real, previsto para 2027, quedan validaciones en el entorno final.',
+      en: 'The system is installed on the institutional server and is being tested with fictional data during 2026. Before actual academic use, planned for 2027, validation remains in the final environment.',
+    },
+    items: {
+      es: [
+        'Realizar pruebas de compatibilidad en Firefox y Safari.',
+        'Repetir las mediciones de rendimiento en la netbook y con datos representativos.',
+        'Concluir la evaluación de usabilidad y planificar el archivado de auditoría por ciclo lectivo.',
+      ],
+      en: [
+        'Run compatibility tests in Firefox and Safari.',
+        'Repeat performance measurements on the netbook and with representative data.',
+        'Complete usability evaluation and plan audit archival by school year.',
+      ],
+    },
+  },
+  technologies: [
+    'Node.js 24',
+    'Express 5',
+    'PostgreSQL',
+    'SQLite',
+    'Kotlin',
+    'Jetpack Compose',
+    'Retrofit',
+    'Room',
+    'DataStore',
+    'WorkManager',
+    'Next.js 16',
+    'React 19',
+    'TypeScript',
+    'Tailwind CSS 4',
+    'Firebase Cloud Messaging',
+  ],
+} as const;
 
 /* ---------------------------------------------------------------- formación */
 

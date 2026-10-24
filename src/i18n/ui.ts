@@ -38,6 +38,9 @@ export const ui = {
     'project.stack': 'Tecnologías',
     'project.present': 'Actualidad',
     'project.metrics': 'El proyecto en números',
+    'project.featured': 'Proyecto destacado',
+    'project.caseStudy': 'Ver caso de estudio',
+    'project.visitSite': 'Visitar sitio institucional',
 
     'gallery.title': 'Capturas',
     'gallery.open': 'Ampliar captura',
@@ -98,6 +101,9 @@ export const ui = {
     'project.stack': 'Tech stack',
     'project.present': 'Present',
     'project.metrics': 'The project in numbers',
+    'project.featured': 'Featured project',
+    'project.caseStudy': 'View case study',
+    'project.visitSite': 'Visit institutional site',
 
     'gallery.title': 'Screenshots',
     'gallery.open': 'Enlarge screenshot',

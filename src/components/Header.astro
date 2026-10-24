@@ -11,13 +11,18 @@ interface Props {
 const { locale } = Astro.props;
 const t = useTranslations(locale);
 const alternate = getAlternateLocale(locale);
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const currentPath = Astro.url.pathname.slice(base.length) || '/';
+const rest = currentPath.replace(/^\/en(?=\/|$)/, '') || '/';
+const isHome = rest === '/';
+const alternateHref = localizePath(rest, alternate);
 
 const links = [
-  { href: '#about', label: t('nav.about') },
-  { href: '#skills', label: t('nav.skills') },
-  { href: '#projects', label: t('nav.projects') },
-  { href: '#education', label: t('nav.education') },
-  { href: '#contact', label: t('nav.contact') },
+  { href: isHome ? '#about' : `${localizePath('/', locale)}#about`, label: t('nav.about') },
+  { href: isHome ? '#skills' : `${localizePath('/', locale)}#skills`, label: t('nav.skills') },
+  { href: isHome ? '#projects' : `${localizePath('/', locale)}#projects`, label: t('nav.projects') },
+  { href: isHome ? '#education' : `${localizePath('/', locale)}#education`, label: t('nav.education') },
+  { href: isHome ? '#contact' : `${localizePath('/', locale)}#contact`, label: t('nav.contact') },
 ];
 ---
 
@@ -55,7 +60,7 @@ const links = [
 
     <div class="flex items-center gap-2">
       <a
-        href={localizePath('/', alternate)}
+        href={alternateHref}
         class="border-subtle hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-300 flex h-10 items-center gap-1.5 rounded-full border px-3 text-xs font-semibold uppercase transition-colors"
         aria-label={t('lang.switch')}
         title={t('lang.switch')}
