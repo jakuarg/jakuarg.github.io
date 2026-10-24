@@ -66,7 +66,8 @@ export const ui = {
     'cv.download': 'Descargar CV',
 
     'theme.toggle': 'Cambiar tema claro/oscuro',
-    'lang.switch': 'Ver en inglés',
+    'lang.toEs': 'Ver en español',
+    'lang.toEn': 'Ver en inglés',
     'lang.label': 'Idioma',
 
     'footer.built': 'Hecho con Astro y Tailwind CSS.',
@@ -137,7 +138,8 @@ export const ui = {
     'cv.download': 'Download CV',
 
     'theme.toggle': 'Toggle light/dark theme',
-    'lang.switch': 'View in Spanish',
+    'lang.toEs': 'View in Spanish',
+    'lang.toEn': 'View in English',
     'lang.label': 'Language',
 
     'footer.built': 'Built with Astro and Tailwind CSS.',

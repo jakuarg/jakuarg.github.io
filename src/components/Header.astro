@@ -1,6 +1,6 @@
 ---
 import type { Locale } from '@/site.config';
-import { useTranslations, localizePath, getAlternateLocale } from '@/i18n/utils';
+import { useTranslations, localizePath } from '@/i18n/utils';
 import ThemeToggle from './ThemeToggle.astro';
 import Icon from './Icon.astro';
 
@@ -10,12 +10,20 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
-const alternate = getAlternateLocale(locale);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const currentPath = Astro.url.pathname.slice(base.length) || '/';
 const rest = currentPath.replace(/^\/en(?=\/|$)/, '') || '/';
 const isHome = rest === '/';
-const alternateHref = localizePath(rest, alternate);
+
+/**
+ * Selector de idioma: un enlace real por idioma, cada uno a su propia versión
+ * de la página actual. Antes era un solo enlace al idioma alternativo, así que
+ * el segmento resaltado como activo también llevaba al otro idioma.
+ */
+const idiomas = [
+  { code: 'es' as const, etiqueta: 'ES', titulo: t('lang.toEs') },
+  { code: 'en' as const, etiqueta: 'EN', titulo: t('lang.toEn') },
+];
 
 const links = [
   { href: isHome ? '#about' : `${localizePath('/', locale)}#about`, label: t('nav.about') },
@@ -59,16 +67,34 @@ const links = [
     </ul>
 
     <div class="flex items-center gap-2">
-      <a
-        href={alternateHref}
-        class="border-subtle hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-300 flex h-10 items-center gap-1.5 rounded-full border px-3 text-xs font-semibold uppercase transition-colors"
-        aria-label={t('lang.switch')}
-        title={t('lang.switch')}
-        hreflang={alternate}
+      <div
+        role="group"
+        aria-label={t('lang.label')}
+        class="border-subtle focus-within:border-brand-400 hover:border-brand-400 flex h-10 items-center rounded-full border p-1 text-xs font-bold tracking-wide uppercase transition-colors"
       >
-        <Icon name="globe" class="size-4" />
-        {alternate}
-      </a>
+        {
+          idiomas.map((idioma, indice) => (
+            <>
+              {indice > 0 && <Icon name="languages" class="text-muted mx-0.5 size-3.5 shrink-0" />}
+              <a
+                href={localizePath(rest, idioma.code)}
+                hreflang={idioma.code}
+                aria-label={idioma.titulo}
+                aria-current={locale === idioma.code ? 'true' : undefined}
+                title={idioma.titulo}
+                class:list={[
+                  'grid h-8 min-w-8 place-items-center rounded-full px-2 transition-colors',
+                  locale === idioma.code
+                    ? 'bg-brand-600 text-white shadow-sm'
+                    : 'text-muted hover:text-brand-600 dark:hover:text-brand-300',
+                ]}
+              >
+                {idioma.etiqueta}
+              </a>
+            </>
+          ))
+        }
+      </div>
       <ThemeToggle label={t('theme.toggle')} />
       <button
         type="button"

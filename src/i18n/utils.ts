@@ -21,8 +21,3 @@ export function localizePath(path: string, locale: Locale): string {
   const prefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`;
   return `${base}${prefix}/${clean}`.replace(/\/{2,}/g, '/');
 }
-
-/** El otro idioma disponible (el sitio tiene exactamente dos). */
-export function getAlternateLocale(locale: Locale): Locale {
-  return locale === 'es' ? 'en' : 'es';
-}
