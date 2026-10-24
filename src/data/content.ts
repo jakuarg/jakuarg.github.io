@@ -318,6 +318,28 @@ export const projects: Project[] = [
       { value: '55', label: { es: 'pruebas de humo automatizadas', en: 'automated smoke tests' } },
       { value: '35', label: { es: 'migraciones versionadas', en: 'versioned migrations' } },
     ],
+    captions: {
+      '01-inicio': {
+        es: 'Panel de inicio con los accesos rápidos y el resumen del ciclo lectivo.',
+        en: 'Home dashboard with quick actions and the summary of the school year.',
+      },
+      '02-calificaciones': {
+        es: 'Planilla de calificaciones de una materia, con notas por cuatrimestre, final y recuperatorios.',
+        en: 'Grade sheet for a subject, with marks per term, final grade and retakes.',
+      },
+      '03-riesgo-pedagogico': {
+        es: 'Seguimiento de riesgo pedagógico: alumnos que necesitan atención temprana.',
+        en: 'Academic risk tracking: students who need early attention.',
+      },
+      '04-auditoria': {
+        es: 'Registro de auditoría con el detalle de cada cambio hecho en el sistema.',
+        en: 'Audit log with the detail of every change made in the system.',
+      },
+      '05-movil': {
+        es: 'La misma plataforma en pantalla de teléfono.',
+        en: 'The same platform on a phone screen.',
+      },
+    },
   },
   {
     slug: 'pos-autopartes',

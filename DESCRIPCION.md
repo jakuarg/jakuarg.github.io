@@ -41,6 +41,10 @@ complemento del CV en PDF, que se puede descargar desde el propio sitio.
    150 usuarios concurrentes en prueba de carga, 58 ms de p95 máximo, 55 pruebas
    de humo automatizadas y 35 migraciones versionadas.
 
+   Se acompaña de cinco capturas de la plataforma —inicio, planilla de
+   calificaciones, riesgo pedagógico, auditoría y la vista en teléfono—, cada
+   una en tema claro y oscuro.
+
    Es el único proyecto con **página propia de caso de estudio**, donde se
    explica la arquitectura, el recorrido de la información y la operación móvil
    sin conexión.
