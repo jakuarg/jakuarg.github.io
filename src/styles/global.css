@@ -74,6 +74,9 @@
     --border-subtle: oklch(0.9 0.01 285);
     --text-strong: oklch(0.22 0.02 285);
     --text-muted: oklch(0.48 0.02 285);
+    /* Fondo del retrato: la foto es un recorte sin fondo propio. */
+    --portrait-from: oklch(0.34 0.07 285);
+    --portrait-to: oklch(0.26 0.05 220);
   }
 
   :root.dark {
@@ -83,6 +86,8 @@
     --border-subtle: oklch(0.31 0.02 285);
     --text-strong: oklch(0.97 0.01 285);
     --text-muted: oklch(0.72 0.02 285);
+    --portrait-from: oklch(0.26 0.06 285);
+    --portrait-to: oklch(0.18 0.04 220);
   }
 
   html {

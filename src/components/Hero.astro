@@ -126,14 +126,24 @@ const retrato = Object.values(retratos)[0]?.default;
         <div class="from-brand-500 to-accent-500 aspect-square rounded-[2rem] bg-gradient-to-br p-px">
           {
             retrato ? (
-              <Image
-                src={retrato}
-                alt={`${profile.name}, ${profile.role[locale]}`}
-                widths={[256, 512, 768]}
-                sizes="(min-width: 768px) 320px, 16rem"
-                loading="eager"
-                class="size-full rounded-[calc(2rem-1px)] object-cover"
-              />
+              /*
+                La foto es un recorte con fondo transparente, así que detrás va
+                un degradado propio. Sin él se vería el del marco, que es mucho
+                más claro y le come contraste a la cara.
+              */
+              <div
+                class="size-full overflow-hidden rounded-[calc(2rem-1px)]"
+                style="background: linear-gradient(to bottom right, var(--portrait-from), var(--portrait-to));"
+              >
+                <Image
+                  src={retrato}
+                  alt={`${profile.name}, ${profile.role[locale]}`}
+                  widths={[256, 512, 768]}
+                  sizes="(min-width: 768px) 320px, 16rem"
+                  loading="eager"
+                  class="size-full object-cover"
+                />
+              </div>
             ) : (
               <div
                 class="font-display grid size-full place-items-center rounded-[calc(2rem-1px)] text-6xl font-bold sm:text-7xl"
